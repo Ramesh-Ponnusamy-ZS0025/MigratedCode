@@ -3,20 +3,20 @@ import unittest
 from your_module import calculate_loan_info  # replace with the actual module name
 
 class TestCalculateLoanInfo(unittest.TestCase):
-    def test_calculate_loan_info_valid_customer_id(self):
-        customer_id = 1  # assume this customer id exists in the database
+    def test_valid_customer_id(self):
+        customer_id = 1  # assume this customer ID has loan records
         total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
-        self.assertEqual(total_loan_amount, 1000.00)  # replace with the expected value
+        self.assertEquals(outstanding_loan_balance, 1000.0)  # replace with expected value
 
-    def test_calculate_loan_info_invalid_customer_id(self):
-        customer_id = 9999  # assume this customer id does not exist in the database
+    def test_invalid_customer_id(self):
+        customer_id = 999  # assume this customer ID has no loan records
         total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
-        self.assertEqual(total_loan_amount, 0.00)  # expect 0.00 for non-existent customer id
+        self.assertEquals(total_loan_amount, 0.0)  # expect zero values for non-existent customer
 
-    def test_calculate_loan_info_no_loans(self):
-        customer_id = 2  # assume this customer id exists but has no loans
+    def test_multiple_loan_records(self):
+        customer_id = 2  # assume this customer ID has multiple loan records
         total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
-        self.assertEqual(total_loan_amount, 0.00)  # expect 0.00 for customer with no loans
+        self.assertEquals(total_repayment, 500.0)  # replace with expected value
 
 if __name__ == '__main__':
     unittest.main()

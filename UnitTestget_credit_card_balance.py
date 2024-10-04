@@ -1,22 +1,22 @@
 
 import unittest
-from your_module import get_credit_card_balance  # replace with the actual module name
+from your_module import get_credit_card_balance  # Replace with the actual module name
 
 class TestGetCreditCardBalance(unittest.TestCase):
-    def test_existing_customer_with_balance(self):
-        customer_id = 1  # assume customer with ID 1 has a credit card balance
+    def test_customer_with_balance(self):
+        customer_id = 1  # Replace with a customer ID that has a balance
         balance = get_credit_card_balance(customer_id)
-        self.assertEquals(balance, 100.0)  # replace with the expected balance
+        self.assertEqual(balance, 100.00)  # Replace with the expected balance
 
-    def test_non_existing_customer(self):
-        customer_id = 1000  # assume no customer with this ID exists
+    def test_customer_without_balance(self):
+        customer_id = 2  # Replace with a customer ID that doesn't have a balance
         balance = get_credit_card_balance(customer_id)
-        self.assertEquals(balance, 0.0)  # expect 0 balance for non-existing customer
+        self.assertEqual(balance, None)
 
-    def test_customer_with_zero_balance(self):
-        customer_id = 2  # assume customer with ID 2 has a credit card balance of 0
+    def test_invalid_customer_id(self):
+        customer_id = -1  # Replace with an invalid customer ID
         balance = get_credit_card_balance(customer_id)
-        self.assertEquals(balance, 0.0)  # expect 0 balance
+        self.assertEqual(balance, None)
 
 if __name__ == '__main__':
     unittest.main()

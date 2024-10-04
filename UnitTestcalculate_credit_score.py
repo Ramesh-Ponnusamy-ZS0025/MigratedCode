@@ -1,24 +1,31 @@
 
 import unittest
-from your_module import calculate_credit_score  # replace 'your_module' with the actual module name
+from your_module import calculate_credit_score, calculate_loan_info, get_credit_card_balance, count_late_payments, calculate_credit_score_value
 
-class TestCalculateCreditScore(unittest.TestCase):
+class TestCreditScoreCalculation(unittest.TestCase):
+
     def test_calculate_credit_score(self):
-        customer_id = 1  # replace with a valid customer ID
-        credit_score = calculate_credit_score(customer_id)
-        self.assertIsNotNone(credit_score)
-        self.assertIsInstance(credit_score, (int, float))
-        # Add more assertions as needed
+        # Assuming customer id 1 has a credit score of 600
+        calculate_credit_score(1)
+        connection = engine.connect()
+        result = connection.execute("SELECT credit_score FROM customers WHERE id = 1").fetchone()
+        self.assertEquals(result[0], 600)
 
-    def test_calculate_credit_score_low(self):
-        customer_id = 2  # replace with a valid customer ID with low credit score
-        credit_score = calculate_credit_score(customer_id)
-        self.assertLessEqual(credit_score, 500)
+    def test_calculate_loan_info(self):
+        loan_info = calculate_loan_info(1)
+        self.assertEquals(len(loan_info), 3)
 
-    def test_calculate_credit_score_high(self):
-        customer_id = 3  # replace with a valid customer ID with high credit score
-        credit_score = calculate_credit_score(customer_id)
-        self.assertGreaterEqual(credit_score, 700)
+    def test_get_credit_card_balance(self):
+        balance = get_credit_card_balance(1)
+        self.assertIsInstance(balance, float)
+
+    def test_count_late_payments(self):
+        count = count_late_payments(1)
+        self.assertIsInstance(count, int)
+
+    def test_calculate_credit_score_value(self):
+        score = calculate_credit_score_value(1000, 500, 500, 2)
+        self.assertIsInstance(score, float)
 
 if __name__ == '__main__':
     unittest.main()
