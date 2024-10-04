@@ -4,18 +4,16 @@ from your_module import calculate_loan_info  # replace with the actual module na
 
 class TestCalculateLoanInfo(unittest.TestCase):
     def test_valid_customer_id(self):
-        result = calculate_loan_info(1)  # assume customer_id 1 exists in the database
-        self.assertEquals(result["total_loan_amount"], 1000.0)  # replace with the expected value
+        result = calculate_loan_info(1)
+        self.assertEqual(result['total_loan_amount'], 1000.0)  # assuming this is the expected value
 
     def test_invalid_customer_id(self):
-        result = calculate_loan_info(9999)  # assume customer_id 9999 does not exist in the database
-        self.assertEquals(result["total_loan_amount"], 0.0)  # expect 0.0 since no records found
+        result = calculate_loan_info(999)  # assuming this customer ID does not exist
+        self.assertEqual(result['outstanding_loan_balance'], 0.0)
 
-    def test_error_handling(self):
-        # simulate a database connection error
-        with unittest.mock.patch('your_module.engine.connect', side_effect=psycopg2.Error("connection error")):
-            with self.assertRaises(psycopg2.Error):
-                calculate_loan_info(1)
+    def test_no_loans(self):
+        result = calculate_loan_info(2)  # assuming this customer has no loans
+        self.assertEqual(result['total_repayment'], 0.0)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

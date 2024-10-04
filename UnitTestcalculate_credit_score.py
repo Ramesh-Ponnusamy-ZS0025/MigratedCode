@@ -1,32 +1,25 @@
 
 import unittest
-from your_module import calculate_credit_score  # replace with the actual module name
+from your_module import calculate_credit_score  # Import the function from your Python file
 
 class TestCalculateCreditScore(unittest.TestCase):
-    def test_credit_score_update(self):
-        # Assuming customer_id 1 exists in the database
-        calculate_credit_score(1)
-        connection = engine.connect()
-        result = connection.execute("SELECT credit_score FROM customers WHERE id = 1")
-        credit_score = result.scalar()
-        self.assertEqual(credit_score, 600)  # replace with expected credit score
+    def test_calculate_credit_score(self):
+        # Test with a valid customer ID
+        customer_id = 1
+        credit_score = calculate_credit_score(customer_id)
+        self.assertEqual(credit_score, 600)  # Replace with the expected credit score
 
-    def test_low_credit_score_alert(self):
-        # Assuming customer_id 2 exists in the database
-        calculate_credit_score(2)
-        connection = engine.connect()
-        result = connection.execute("SELECT * FROM credit_score_alerts WHERE customer_id = 2")
-        self.assertIsNotNone(result.fetchone())
+    def test_calculate_credit_score_low_score(self):
+        # Test with a valid customer ID that should trigger a low score alert
+        customer_id = 2
+        credit_score = calculate_credit_score(customer_id)
+        self.assertEqual(credit_score, 400)  # Replace with the expected credit score
 
-    def test_credit_score_calculation(self):
-        # Assuming customer_id 3 exists in the database
-        calculate_credit_score(3)
-        connection = engine.connect()
-        result = connection.execute("SELECT credit_score FROM customers WHERE id = 3")
-        credit_score = result.scalar()
-        # Replace with expected calculation logic
-        total_loan_amount, total_repayment, outstanding_loan_balance = 1000, 500, 200
-        credit_card_balance = 100
-        late_pay_count = 2
-        expected_credit_score = calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
-        self.assertEqual(credit_score, expected_credit_score)
+    def test_calculate_credit_score_invalid_customer_id(self):
+        # Test with an invalid customer ID
+        customer_id = -1
+        with self.assertRaises(Exception):  # Replace with the expected exception
+            calculate_credit_score(customer_id)
+
+if __name__ == '__main__':
+    unittest.main()
