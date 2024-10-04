@@ -6,41 +6,30 @@ import psycopg2
 
 def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count):
     connection = engine.connect()
-    transaction = connection.begin()
-
     try:
-        sql = text("""
-            SELECT 
-                CASE 
-                    WHEN :total_loan_amount > 0 THEN 
-                        400 + ROUND((:total_repayment / :total_loan_amount) * 400, 2)
-                    ELSE 
-                        800
-                END +
-                CASE 
-                    WHEN :credit_card_balance > 0 THEN 
-                        ROUND((1 - (:credit_card_balance / 10000)) * 300, 2)
-                    ELSE 
-                        300
-                END -
-                (:late_pay_count * 50) 
-                AS credit_score
-        """)
+        # Initialize credit_score
+        credit_score = 0
 
-        result = connection.execute(sql, {
-            'total_loan_amount': total_loan_amount,
-            'total_repayment': total_repayment,
-            'credit_card_balance': credit_card_balance,
-            'late_pay_count': late_pay_count
-        }).fetchone()
+        # Calculate credit_score
+        if total_loan_amount > 0:
+            credit_score += connection.execute(text("SELECT ROUND((:total_repayment / :total_loan_amount) * 400, 2)").bindparams(total_repayment=total_repayment, total_loan_amount=total_loan_amount)). scalar()
+        else:
+            credit_score += 400
 
-        credit_score = max(300, min(850, result[0]))
+        if credit_card_balance > 0:
+            credit_score += connection.execute(text("SELECT ROUND((1 - (:credit_card_balance / 10000)) * 300, 2)").bindparams(credit_card_balance=credit_card_balance)).scalar()
+        else:
+            credit_score += 300
 
-        transaction.commit()
-        connection.close()
+        credit_score -= late_pay_count * 50
+
+        # Ensure credit_score is within range
+        if credit_score < 300:
+            credit_score = 300
+        elif credit_score > 850:
+            credit_score = 850
 
         return credit_score
-    except psycopg2.Error as e:
-        transaction.rollback()
+    finally:
+        connection.commit()
         connection.close()
-        raise e

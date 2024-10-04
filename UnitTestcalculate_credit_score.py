@@ -1,31 +1,23 @@
 
 import unittest
-from your_module import calculate_credit_score, calculate_loan_info, get_credit_card_balance, count_late_payments, calculate_credit_score_value
+from your_module import calculate_credit_score  # Replace 'your_module' with the actual module name
 
-class TestCreditScoreCalculation(unittest.TestCase):
+class TestCalculateCreditScore(unittest.TestCase):
 
     def test_calculate_credit_score(self):
-        # Assuming customer id 1 has a credit score of 600
-        calculate_credit_score(1)
-        connection = engine.connect()
-        result = connection.execute("SELECT credit_score FROM customers WHERE id = 1").fetchone()
-        self.assertEquals(result[0], 600)
+        # Test with a customer with a good credit score
+        credit_score = calculate_credit_score(1)  # Replace 1 with a valid customer ID
+        self.assertEquals(credit_score, 750)  # Replace 750 with the expected credit score
 
-    def test_calculate_loan_info(self):
-        loan_info = calculate_loan_info(1)
-        self.assertEquals(len(loan_info), 3)
+    def test_calculate_credit_score_low(self):
+        # Test with a customer with a low credit score
+        credit_score = calculate_credit_score(2)  # Replace 2 with a valid customer ID
+        self.assertEquals(credit_score, 400)  # Replace 400 with the expected credit score
 
-    def test_get_credit_card_balance(self):
-        balance = get_credit_card_balance(1)
-        self.assertIsInstance(balance, float)
-
-    def test_count_late_payments(self):
-        count = count_late_payments(1)
-        self.assertIsInstance(count, int)
-
-    def test_calculate_credit_score_value(self):
-        score = calculate_credit_score_value(1000, 500, 500, 2)
-        self.assertIsInstance(score, float)
+    def test_calculate_credit_score_high(self):
+        # Test with a customer with a high credit score
+        credit_score = calculate_credit_score(3)  # Replace 3 with a valid customer ID
+        self.assertEquals(credit_score, 800)  # Replace 800 with the expected credit score
 
 if __name__ == '__main__':
     unittest.main()

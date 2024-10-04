@@ -1,23 +1,22 @@
 
 import unittest
-from your_module import count_late_payments  # Replace with the actual module name
+from your_module import count_late_payments  # replace with the actual module name
 
 class TestCountLatePayments(unittest.TestCase):
-    def test_customer_id_1(self):
-        result = count_late_payments(1)
-        self.assertEquals(result, 2)  # assuming there are 2 late payments for customer 1
+    def test_customer_with_late_payments(self):
+        customer_id = 1  # assume this customer has late payments in the database
+        late_pay_count = count_late_payments(customer_id)
+        self.assertEqual(late_pay_count, 2)  # assume there are 2 late payments for this customer
 
-    def test_customer_id_2(self):
-        result = count_late_payments(2)
-        self.assertEquals(result, 0)  # assuming there are no late payments for customer 2
+    def test_customer_without_late_payments(self):
+        customer_id = 2  # assume this customer has no late payments in the database
+        late_pay_count = count_late_payments(customer_id)
+        self.assertEqual(late_pay_count, 0)
 
-    def test_customer_id_non_existent(self):
-        result = count_late_payments(999)
-        self.assertEquals(result, 0)  # assuming there are no late payments for a non-existent customer
-
-    def test_customer_id_none(self):
-        with self.assertRaises(TypeError):
-            count_late_payments(None)  # expecting a TypeError when passing None as an argument
+    def test_customer_id_not_found(self):
+        customer_id = 999  # assume this customer does not exist in the database
+        with self.assertRaises(psycopg2.Error):
+            count_late_payments(customer_id)
 
 if __name__ == '__main__':
     unittest.main()

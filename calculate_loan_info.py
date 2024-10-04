@@ -16,7 +16,10 @@ def calculate_loan_info(p_customer_id):
         """)
         result = connection.execute(query, {'p_customer_id': p_customer_id})
         row = result.fetchone()
-        total_loan_amount, total_repayment, outstanding_loan_balance = row
-        return total_loan_amount, total_repayment, outstanding_loan_balance
+        if row:
+            total_loan_amount, total_repayment, outstanding_loan_balance = row
+            return total_loan_amount, total_repayment, outstanding_loan_balance
+        else:
+            return None
     finally:
         connection.close()
