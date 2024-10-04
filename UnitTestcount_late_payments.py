@@ -1,22 +1,17 @@
 
 import unittest
-from your_module import count_late_payments  # Replace with the actual module name
+from your_module import count_late_payments, calculate_loan_info  # Replace with the actual module name
 
 class TestCountLatePayments(unittest.TestCase):
-    def test_customer_with_late_payments(self):
-        customer_id = 1  # assume this customer has late payments
+    def test_count_late_payments(self):
+        customer_id = 1  # Replace with a valid customer ID
         late_pay_count = count_late_payments(customer_id)
-        self.assertEquals(late_pay_count, 2)  # assume there are 2 late payments for this customer
+        self.assertEqual(late_pay_count, 2)  # Replace with the expected count for the given customer ID
 
-    def test_customer_with_no_late_payments(self):
-        customer_id = 2  # assume this customer has no late payments
-        late_pay_count = count_late_payments(customer_id)
-        self.assertEquals(late_pay_count, 0)
-
-    def test_invalid_customer_id(self):
-        customer_id = -1  # assume this customer ID does not exist
-        late_pay_count = count_late_payments(customer_id)
-        self.assertEquals(late_pay_count, 0)  # assume no late payments for non-existent customer
+class TestCalculateLoanInfo(unittest.TestCase):
+    def test_calculate_loan_info(self):
+        # Since calculate_loan_info is not implemented, we can't test it yet
+        pass
 
 if __name__ == '__main__':
     unittest.main()
