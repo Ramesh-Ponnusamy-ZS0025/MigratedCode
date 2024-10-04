@@ -1,22 +1,23 @@
 
 import unittest
-from your_module import calculate_credit_score
+from your_module import update_customer_credit_score  # Replace with the actual module name
 
-class TestCalculateCreditScore(unittest.TestCase):
-    def test_credit_score_average(self):
-        customer_id = 1  # assume this customer has a mix of loans, credit cards, and payments
-        score = calculate_credit_score(customer_id)
-        self.assertEqual(score, 600)  # assuming an average credit score for this customer
+class TestUpdateCustomerCreditScore(unittest.TestCase):
+    def test_update_customer_credit_score(self):
+        customer_id = 123
+        credit_score = update_customer_credit_score(customer_id)
+        self.assertIsNotNone(credit_score)
+        self.assertIsInstance(credit_score, (int, float))
 
-    def test_credit_score_good(self):
-        customer_id = 2  # assume this customer has no late payments and good credit habits
-        score = calculate_credit_score(customer_id)
-        self.assertEqual(score, 800)  # assuming a good credit score for this customer
+    def test_update_customer_credit_score_low_score(self):
+        customer_id = 456
+        credit_score = update_customer_credit_score(customer_id)
+        selfasserEquals(credit_score < 500, True)
 
-    def test_credit_score_bad(self):
-        customer_id = 3  # assume this customer has multiple late payments and high credit card balances
-        score = calculate_credit_score(customer_id)
-        self.assertEqual(score, 400)  # assuming a bad credit score for this customer
+    def test_update_customer_credit_score_high_score(self):
+        customer_id = 789
+        credit_score = update_customer_credit_score(customer_id)
+        selfasserEquals(credit_score >= 500, True)
 
 if __name__ == '__main__':
     unittest.main()
