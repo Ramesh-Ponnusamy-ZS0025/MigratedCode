@@ -1,23 +1,39 @@
 
 import unittest
-from calculate_credit_score_value import calculate_credit_score_value
+from your_module import calculate_credit_score_value  # Replace 'your_module' with the actual module name
 
 class TestCalculateCreditScoreValue(unittest.TestCase):
-    def testPositiveTotalLoanAmount(self):
-        result = calculate_credit_score_value(10000, 5000, 2000, 2)
-        self.assertEquals(result, 650.0)
+    def test_calculate_credit_score_value_all_positive(self):
+        total_loan_amount = 10000
+        total_repayment = 8000
+        credit_card_balance = 0
+        late_pay_count = 0
+        expected_credit_score = 700
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), expected_credit_score)
 
-    def testZeroTotalLoanAmount(self):
-        result = calculate_credit_score_value(0, 5000, 2000, 2)
-        self.assertEquals(result, 550.0)
+    def test_calculate_credit_score_value_late_payments(self):
+        total_loan_amount = 5000
+        total_repayment = 4000
+        credit_card_balance = 0
+        late_pay_count = 2
+        expected_credit_score = 550
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), expected_credit_score)
 
-    def testHighCreditCardBalance(self):
-        result = calculate_credit_score_value(10000, 5000, 8000, 2)
-        self.assertEquals(result, 400.0)
+    def test_calculate_credit_score_value_high_credit_card_balance(self):
+        total_loan_amount = 0
+        total_repayment = 0
+        credit_card_balance = 9000
+        late_pay_count = 0
+        expected_credit_score = 300
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), expected_credit_score)
 
-    def testLatePayCount(self):
-        result = calculate_credit_score_value(10000, 5000, 2000, 4)
-        self.assertEquals(result, 500.0)
+    def test_calculate_credit_score_value_no_loan(self):
+        total_loan_amount = 0
+        total_repayment = 0
+        credit_card_balance = 0
+        late_pay_count = 0
+        expected_credit_score = 700
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), expected_credit_score)
 
 if __name__ == '__main__':
     unittest.main()
