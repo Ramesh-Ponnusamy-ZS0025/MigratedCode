@@ -12,14 +12,14 @@ def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card
     if total_loan_amount > 0:
         query = text("SELECT ROUND((:total_repayment / :total_loan_amount) * 400, 2)")
         result = connection.execute(query, {'total_repayment': total_repayment, 'total_loan_amount': total_loan_amount})
-        credit_score += result.scalar()
+        credit_score += result.fetchone()[0]
     else:
         credit_score += 400
     
     if credit_card_balance > 0:
         query = text("SELECT ROUND((1 - (:credit_card_balance / 10000)) * 300, 2)")
         result = connection.execute(query, {'credit_card_balance': credit_card_balance})
-        credit_score += result.scalar()
+        credit_score += result.fetchone()[0]
     else:
         credit_score += 300
     
@@ -30,6 +30,7 @@ def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card
     elif credit_score > 850:
         credit_score = 850
     
+    connection.commit()
     connection.close()
     
     return credit_score

@@ -1,22 +1,21 @@
 
 import unittest
-from your_module import calculate_loan_info  # Replace with the actual module name
+from your_module import calculate_loan_info  # replace with the actual module name
 
 class TestCalculateLoanInfo(unittest.TestCase):
-    def test_customer_with_loans(self):
-        customer_id = 1  # assume this customer has loans in the database
-        loan_amount, repayment, outstanding_balance = calculate_loan_info(customer_id)
-        self.assertEqual(loan_amount, 1000.00)  # replace with expected value
-
-    def test_customer_without_loans(self):
-        customer_id = 2  # assume this customer has no loans in the database
-        loan_amount, repayment, outstanding_balance = calculate_loan_info(customer_id)
-        self.assertEqual(outstanding_balance, 0.00)  # replace with expected value
+    def test_valid_customer_id(self):
+        result = calculate_loan_info(1)  # assume customer_id 1 exists in the database
+        self.assertEquals(result["total_loan_amount"], 1000.0)  # replace with the expected value
 
     def test_invalid_customer_id(self):
-        customer_id = -1  # assume this customer does not exist
-        with self.assertRaises(Exception):
-            calculate_loan_info(customer_id)
+        result = calculate_loan_info(9999)  # assume customer_id 9999 does not exist in the database
+        self.assertEquals(result["total_loan_amount"], 0.0)  # expect 0.0 since no records found
 
-if __name__ == '__main__':
+    def test_error_handling(self):
+        # simulate a database connection error
+        with unittest.mock.patch('your_module.engine.connect', side_effect=psycopg2.Error("connection error")):
+            with self.assertRaises(psycopg2.Error):
+                calculate_loan_info(1)
+
+if __name__ == "__main__":
     unittest.main()
