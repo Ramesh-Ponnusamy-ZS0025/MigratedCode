@@ -3,17 +3,17 @@ import unittest
 from your_module import calculate_loan_info  # replace with the actual module name
 
 class TestCalculateLoanInfo(unittest.TestCase):
-    def test_valid_customer_id(self):
-        result = calculate_loan_info(1)
-        self.assertEqual(result['total_loan_amount'], 1000.0)  # assuming this is the expected value
+    def test_customer_with_loans(self):
+        result = calculate_loan_info(1)  # assuming customer 1 has loans
+        self.assertEqual(result['total_loan_amount'], 1000.0)  # example value
+
+    def test_customer_without_loans(self):
+        result = calculate_loan_info(2)  # assuming customer 2 has no loans
+        self.assertEqual(result['total_loan_amount'], 0.0)
 
     def test_invalid_customer_id(self):
-        result = calculate_loan_info(999)  # assuming this customer ID does not exist
-        self.assertEqual(result['outstanding_loan_balance'], 0.0)
-
-    def test_no_loans(self):
-        result = calculate_loan_info(2)  # assuming this customer has no loans
-        self.assertEqual(result['total_repayment'], 0.0)
+        with self.assertRaises(psycopg2.Error):
+            calculate_loan_info(-1)  # assuming invalid customer ID
 
 if __name__ == '__main__':
     unittest.main()
