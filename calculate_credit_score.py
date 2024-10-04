@@ -4,50 +4,83 @@ from sqlalchemy import text
 import pandas as pd
 import psycopg2
 
-def calculate_customer_credit_score(p_customer_id):
+def calculate_credit_score(p_customer_id):
     conn = engine.connect()
-    try:
-        # Call the procedures to get necessary data
-        total_loan_amount = None
-        total_repayment = None
-        outstanding_loan_balance = None
-        credit_card_balance = None
-        late_pay_count = None
 
-        query = text("SELECT * FROM calculate_loan_info(:p_customer_id, :total_loan_amount, :total_repayment, :outstanding_loan_balance)")
-        result = conn.execute(query, {'p_customer_id': p_customer_id, 'total_loan_amount': total_loan_amount, 'total_repayment': total_repayment, 'outstanding_loan_balance': outstanding_loan_balance})
-        for row in result:
-            total_loan_amount = row[0]
-            total_repayment = row[1]
-            outstanding_loan_balance = row[2]
+    # Call the nested procedures to get necessary data
+    total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(conn, p_customer_id)
+    credit_card_balance = get_credit_card_balance(conn, p_customer_id)
+    late_pay_count = count_late_payments(conn, p_customer_id)
+    v_credit_score = calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
 
-        query = text("SELECT * FROM get_credit_card_balance(:p_customer_id, :credit_card_balance)")
-        result = conn.execute(query, {'p_customer_id': p_customer_id, 'credit_card_balance': credit_card_balance})
-        for row in result:
-            credit_card_balance = row[0]
+    # Update the customer's credit score
+    update_query = text("""
+        UPDATE customers
+        SET credit_score = ROUND(:credit_score, 0)
+        WHERE customers.id = :customer_id
+    """)
+    conn.execute(update_query, {'credit_score': v_credit_score, 'customer_id': p_customer_id})
 
-        query = text("SELECT * FROM count_late_payments(:p_customer_id, :late_pay_count)")
-        result = conn.execute(query, {'p_customer_id': p_customer_id, 'late_pay_count': late_pay_count})
-        for row in result:
-            late_pay_count = row[0]
+    # Optionally log very low scores
+    if v_credit_score < 500:
+        insert_query = text("""
+            INSERT INTO credit_score_alerts (customer_id, credit_score, created_at)
+            VALUES (:customer_id, ROUND(:credit_score, 0), NOW())
+        """)
+        conn.execute(insert_query, {'customer_id': p_customer_id, 'credit_score': v_credit_score})
 
-        v_credit_score = None
-        query = text("SELECT * FROM calculate_credit_score_value(:total_loan_amount, :total_repayment, :credit_card_balance, :late_pay_count, :v_credit_score)")
-        result = conn.execute(query, {'total_loan_amount': total_loan_amount, 'total_repayment': total_repayment, 'credit_card_balance': credit_card_balance, 'late_pay_count': late_pay_count, 'v_credit_score': v_credit_score})
-        for row in result:
-            v_credit_score = row[0]
+    conn.commit()
+    return v_credit_score
 
-        # Update the customer's credit score
-        query = text("UPDATE customers SET credit_score = ROUND(:v_credit_score, 0) WHERE id = :p_customer_id")
-        conn.execute(query, {'v_credit_score': v_credit_score, 'p_customer_id': p_customer_id})
-        conn.commit()
 
-        # Optionally log very low scores
-        if v_credit_score < 500:
-            query = text("INSERT INTO credit_score_alerts (customer_id, credit_score, created_at) VALUES (:p_customer_id, ROUND(:v_credit_score, 0), NOW())")
-            conn.execute(query, {'p_customer_id': p_customer_id, 'v_credit_score': v_credit_score})
-            conn.commit()
+def calculate_loan_info(conn, p_customer_id):
+    query = text("""
+        SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0),
+               COALESCE(ROUND(SUM(repayment_amount), 2), 0),
+               COALESCE(ROUND(SUM(outstanding_balance), 2), 0)
+        FROM loans
+        WHERE loans.customer_id = :customer_id
+    """)
+    result = conn.execute(query, {'customer_id': p_customer_id})
+    total_loan_amount, total_repayment, outstanding_loan_balance = result.fetchone()
+    return total_loan_amount, total_repayment, outstanding_loan_balance
 
-        return v_credit_score
-    finally:
-        conn.close()
+
+def get_credit_card_balance(conn, p_customer_id):
+    query = text("""
+        SELECT COALESCE(ROUND(SUM(balance), 2), 0)
+        FROM credit_cards
+        WHERE credit_cards.customer_id = :customer_id
+    """)
+    result = conn.execute(query, {'customer_id': p_customer_id})
+    credit_card_balance, = result.fetchone()
+    return credit_card_balance
+
+
+def count_late_payments(conn, p_customer_id):
+    query = text("""
+        SELECT COUNT(*)
+        FROM payments
+        WHERE payments.customer_id = :customer_id AND status = 'Late'
+    """)
+    result = conn.execute(query, {'customer_id': p_customer_id})
+    late_pay_count, = result.fetchone()
+    return late_pay_count
+
+
+def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count):
+    credit_score = 0
+    if total_loan_amount > 0:
+        credit_score += ROUND((total_repayment / total_loan_amount) * 400, 2)
+    else:
+        credit_score += 400
+    if credit_card_balance > 0:
+        credit_score += ROUND((1 - (credit_card_balance / 10000)) * 300, 2)
+    else:
+        credit_score += 300
+    credit_score -= (late_pay_count * 50)
+    if credit_score < 300:
+        credit_score = 300
+    elif credit_score > 850:
+        credit_score = 850
+    return credit_score

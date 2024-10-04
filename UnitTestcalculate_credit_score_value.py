@@ -1,31 +1,29 @@
 
 import unittest
-from your_module import calculate_credit_score  # replace with the actual module name
+from your_module import calculate_credit_score_value  # replace 'your_module' with the actual module name
 
-class TestCalculateCreditScore(unittest.TestCase):
-    def test_all_good(self):
+class TestCalculateCreditScoreValue(unittest.TestCase):
+
+    def test_high_credit_score(self):
         total_loan_amount = 10000
-        total_repayment = 8000
-        credit_card_balance = 500
+        total_repayment = 10000
+        credit_card_balance = 0
         late_pay_count = 0
-        result = calculate_credit_score(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
-        self.assertEquals(result, 740.0)
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), 850)
 
-    def test_late_payments(self):
-        total_loan_amount = 10000
-        total_repayment = 8000
-        credit_card_balance = 500
+    def test_low_credit_score(self):
+        total_loan_amount = 0
+        total_repayment = 0
+        credit_card_balance = 10000
         late_pay_count = 2
-        result = calculate_credit_score(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
-        self.assertEquals(result, 640.0)
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), 300)
 
-    def test_high_credit_card_balance(self):
-        total_loan_amount = 10000
-        total_repayment = 8000
-        credit_card_balance = 9000
-        late_pay_count = 0
-        result = calculate_credit_score(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
-        self.assertEquals(result, 540.0)
+    def test_average_credit_score(self):
+        total_loan_amount = 5000
+        total_repayment = 4000
+        credit_card_balance = 2000
+        late_pay_count = 1
+        self.assertEquals(calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count), 642.86)
 
 if __name__ == '__main__':
     unittest.main()

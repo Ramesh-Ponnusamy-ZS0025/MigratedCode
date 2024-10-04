@@ -1,27 +1,34 @@
 
 import unittest
-from your_module import calculate_customer_credit_score  # Replace with the actual module name
+from your_module import calculate_credit_score, calculate_loan_info, get_credit_card_balance, count_late_payments, calculate_credit_score_value
 
-class TestCalculateCustomerCreditScore(unittest.TestCase):
+class TestCalculateCreditScore(unittest.TestCase):
     def test_calculate_credit_score(self):
-        customer_id = 1
-        credit_score = calculate_customer_credit_score(customer_id)
-        self.assertEquals(credit_score, 800)  # Replace with an expected credit score value
+        credit_score = calculate_credit_score(1)
+        self.assertEquals(credit_score, 600)  # replace with expected credit score
 
-    def test_update_customer_credit_score(self):
-        customer_id = 2
-        calculate_customer_credit_score(customer_id)
+    def test_calculate_loan_info(self):
         conn = engine.connect()
-        result = conn.execute("SELECT credit_score FROM customers WHERE id = %s", (customer_id,))
-        updated_credit_score = result.fetchone()[0]
-        self.assertEquals(updated_credit_score, 900)  # Replace with an expected credit score value
+        total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(conn, 1)
+        self.assertEquals(total_loan_amount, 1000.0)  # replace with expected total loan amount
 
-    def test_log_low_credit_score(self):
-        customer_id = 3
-        calculate_customer_credit_score(customer_id)
+    def test_get_credit_card_balance(self):
         conn = engine.connect()
-        result = conn.execute("SELECT * FROM credit_score_alerts WHERE customer_id = %s", (customer_id,))
-        self.assertIsNotNone(result.fetchone())
+        credit_card_balance = get_credit_card_balance(conn, 1)
+        self.assertEquals(credit_card_balance, 500.0)  # replace with expected credit card balance
+
+    def test_count_late_payments(self):
+        conn = engine.connect()
+        late_pay_count = count_late_payments(conn, 1)
+        self.assertEquals(late_pay_count, 2)  # replace with expected late pay count
+
+    def test_calculate_credit_score_value(self):
+        total_loan_amount = 1000.0
+        total_repayment = 800.0
+        credit_card_balance = 500.0
+        late_pay_count = 2
+        credit_score = calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
+        self.assertEquals(credit_score, 550.0)  # replace with expected credit score value
 
 if __name__ == '__main__':
     unittest.main()

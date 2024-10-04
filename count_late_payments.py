@@ -1,20 +1,27 @@
 
 from config import engine
+import sqlalchemy as sa
 import pandas as pd
-from sqlalchemy import text
 import psycopg2
 
-def get_late_pay_count(p_customer_id):
+def count_late_payments(p_customer_id: int) -> int:
+    """
+    Count late payments for a given customer ID
+    """
     conn = engine.connect()
     try:
-        query = text("""
+        query = sa.text("""
             SELECT COUNT(*)
             FROM payments
-            WHERE payments.customer_id = :customer_id AND status = 'Late'
+            WHERE customer_id = :customer_id AND status = 'Late'
         """)
         result = conn.execute(query, {'customer_id': p_customer_id})
         late_pay_count = result.scalar()
         conn.commit()
         return late_pay_count
+    except psycopg2.Error as e:
+        print(f"Error: {e}")
+        conn.rollback()
+        raise
     finally:
         conn.close()
