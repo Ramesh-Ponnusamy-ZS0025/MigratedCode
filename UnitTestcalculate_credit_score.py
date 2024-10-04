@@ -1,23 +1,27 @@
 
 import unittest
-from your_module import update_customer_credit_score  # Replace with the actual module name
+from your_module import calculate_customer_credit_score  # Replace with the actual module name
 
-class TestUpdateCustomerCreditScore(unittest.TestCase):
+class TestCalculateCustomerCreditScore(unittest.TestCase):
+    def test_calculate_credit_score(self):
+        customer_id = 1
+        credit_score = calculate_customer_credit_score(customer_id)
+        self.assertEquals(credit_score, 800)  # Replace with an expected credit score value
+
     def test_update_customer_credit_score(self):
-        customer_id = 123
-        credit_score = update_customer_credit_score(customer_id)
-        self.assertIsNotNone(credit_score)
-        self.assertIsInstance(credit_score, (int, float))
+        customer_id = 2
+        calculate_customer_credit_score(customer_id)
+        conn = engine.connect()
+        result = conn.execute("SELECT credit_score FROM customers WHERE id = %s", (customer_id,))
+        updated_credit_score = result.fetchone()[0]
+        self.assertEquals(updated_credit_score, 900)  # Replace with an expected credit score value
 
-    def test_update_customer_credit_score_low_score(self):
-        customer_id = 456
-        credit_score = update_customer_credit_score(customer_id)
-        selfasserEquals(credit_score < 500, True)
-
-    def test_update_customer_credit_score_high_score(self):
-        customer_id = 789
-        credit_score = update_customer_credit_score(customer_id)
-        selfasserEquals(credit_score >= 500, True)
+    def test_log_low_credit_score(self):
+        customer_id = 3
+        calculate_customer_credit_score(customer_id)
+        conn = engine.connect()
+        result = conn.execute("SELECT * FROM credit_score_alerts WHERE customer_id = %s", (customer_id,))
+        self.assertIsNotNone(result.fetchone())
 
 if __name__ == '__main__':
     unittest.main()

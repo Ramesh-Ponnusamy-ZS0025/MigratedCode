@@ -1,33 +1,26 @@
 
-from config import engine  # import database connection configuration
-import pandas as pd
+from config import engine
 from sqlalchemy import text
+import pandas as pd
+import psycopg2
 
-def get_loan_summary(customer_id):
-    conn = engine.connect()  # create a connection object
-    
-    # define the SQL query with placeholders for parameters
-    query = text("""
-        SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0), 
-               COALESCE(ROUND(SUM(repayment_amount), 2), 0), 
-               COALESCE(ROUND(SUM(outstanding_balance), 2), 0)
-        FROM loans
-        WHERE loans.customer_id = :customer_id;
-    """)
-    
-    # execute the query with parameter dictionary
-    result = conn.execute(query, {'customer_id': customer_id})
-    
-    # fetch the results as a single row
-    row = result.fetchone()
-    
-    # create a dictionary to store the results
-    loan_summary = {
-        'total_loan_amount': row[0],
-        'total_repayment': row[1],
-        'outstanding_loan_balance': row[2]
-    }
-    
-    conn.close()  # close the connection
-    
-    return loan_summary
+def get_loan_balances(p_customer_id):
+    conn = engine.connect()
+    try:
+        query = text("""
+            SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0) AS total_loan_amount,
+                   COALESCE(ROUND(SUM(repayment_amount), 2), 0) AS total_repayment,
+                   COALESCE(ROUND(SUM(outstanding_balance), 2), 0) AS outstanding_loan_balance
+            FROM loans
+            WHERE loans.customer_id = :customer_id
+        """)
+        result = conn.execute(query, {'customer_id': p_customer_id})
+        row = result.fetchone()
+        total_loan_amount, total_repayment, outstanding_loan_balance = row
+        return {
+            'total_loan_amount': total_loan_amount,
+            'total_repayment': total_repayment,
+            'outstanding_loan_balance': outstanding_loan_balance
+        }
+    finally:
+        conn.close()
