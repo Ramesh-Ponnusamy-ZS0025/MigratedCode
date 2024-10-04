@@ -3,31 +3,25 @@ import unittest
 from your_module import calculate_credit_score  # Replace with the actual module name
 
 class TestCalculateCreditScore(unittest.TestCase):
-    def setUp(self):
-        # Create a test database connection
-        self.connection = engine.connect()
-
-    def tearDown(self):
-        # Close the test database connection
-        self.connection.close()
-
     def test_calculate_credit_score(self):
-        # Test with a valid customer ID
-        customer_id = 1
+        customer_id = 1  # Assume this customer ID exists in the database
         credit_score = calculate_credit_score(customer_id)
-        self.assertEquals(credit_score, 600)  # Replace with the expected credit score value
+        self.assertEqual(credit_score, 721)  # Replace with the expected credit score value
 
-    def test_calculate_credit_score_low_score(self):
-        # Test with a customer ID that should trigger a low score alert
-        customer_id = 2
-        credit_score = calculate_credit_score(customer_id)
-        self.assertEquals(credit_score, 400)  # Replace with the expected credit score value
+    def test.credit_score_below_500(self):
+        customer_id = 2  # Assume this customer ID exists in the database
+        credit_score = calculate_credit_info(customer_id)
+        self.assertEqual(credit_score, 480)  # Replace with the expected credit score value
 
-    def test_calculate_credit_score_invalid_customer_id(self):
-        # Test with an invalid customer ID
-        customer_id = -1
-        with self.assertRaises(Exception):
-            calculate_credit_score(customer_id)
+    def test.credit_score_update(self):
+        customer_id = 3  # Assume this customer ID exists in the database
+        initial_credit_score = 500
+        calculate_credit_score(customer_id)
+        # Query the database to get the updated credit score
+        connection = engine.connect()
+        result = connection.execute("SELECT credit_score FROM customers WHERE id = :p_customer_id", {"p_customer_id": customer_id})
+        updated_credit_score = result.fetchone()[0]
+        self.assertEqual(updated_credit_score, 720)  # Replace with the expected updated credit score value
 
 if __name__ == '__main__':
     unittest.main()

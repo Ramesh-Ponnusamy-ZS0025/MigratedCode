@@ -3,20 +3,17 @@ import unittest
 from your_module import count_late_payments  # replace 'your_module' with the actual module name
 
 class TestCountLatePayments(unittest.TestCase):
-    def test_customer_with_late_payments(self):
-        customer_id = 1  # assume this customer has late payments
-        late_pay_count = count_late_payments(customer_id)
-        self.assertEquals(late_pay_count, 2)  # assume there are 2 late payments for this customer
+    def test_count_late_payments_customer_id_1(self):
+        late_pay_count = count_late_payments(1)
+        self.assertEquals(late_pay_count, 2)  # assuming there are 2 late payments for customer_id 1
 
-    def test_customer_without_late_payments(self):
-        customer_id = 2  # assume this customer has no late payments
-        late_pay_count = count_late_payments(customer_id)
-        self.assertEquals(late_pay_count, 0)
+    def test_count_late_payments_customer_id_2(self):
+        late_pay_count = count_late_payments(2)
+        self.assertEquals(late_pay_count, 0)  # assuming there are no late payments for customer_id 2
 
-    def test_non_existent_customer(self):
-        customer_id = 999  # assume this customer does not exist
-        late_pay_count = count_late_payments(customer_id)
-        self.assertEquals(late_pay_count, 0)
+    def test_count_late_payments_invalid_customer_id(self):
+        late_pay_count = count_late_payments(-1)
+        self.assertEquals(late_pay_count, 0)  # assuming no customer_id -1 exists
 
 if __name__ == '__main__':
     unittest.main()

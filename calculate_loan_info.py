@@ -5,22 +5,21 @@ import pandas as pd
 import psycopg2
 
 def calculate_loan_info(p_customer_id):
-    conn = engine.connect()
+    connection = engine.connect()
     try:
         query = text("""
-            SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0), 
-                   COALESCE(ROUND(SUM(repayment_amount), 2), 0), 
-                   COALESCE(ROUND(SUM(outstanding_balance), 2), 0)
+            SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0) AS total_loan_amount, 
+                   COALESCE(ROUND(SUM(repayment_amount), 2), 0) AS total_repayment, 
+                   COALESCE(ROUND(SUM(outstanding_balance), 2), 0) AS outstanding_loan_balance
             FROM loans
             WHERE loans.customer_id = :p_customer_id
         """)
-        result = conn.execute(query, {'p_customer_id': p_customer_id})
+        result = connection.execute(query, {'p_customer_id': p_customer_id})
         row = result.fetchone()
-        total_loan_amount, total_repayment, outstanding_loan_balance = row
-        return {
-            'total_loan_amount': total_loan_amount,
-            'total_repayment': total_repayment,
-            'outstanding_loan_balance': outstanding_loan_balance
-        }
+        if row:
+            total_loan_amount, total_repayment, outstanding_loan_balance = row
+            return total_loan_amount, total_repayment, outstanding_loan_balance
+        else:
+            return None
     finally:
-        conn.close()
+        connection.close()
