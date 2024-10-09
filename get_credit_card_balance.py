@@ -5,12 +5,12 @@ import pandas as pd
 import psycopg2
 
 def get_credit_card_balance(p_customer_id):
-    connection = engine.connect()
+    conn = engine.connect()
     try:
-        query = text("SELECT COALESCE(ROUND(SUM(balance), 2), 0) FROM credit_cards WHERE customer_id = :customer_id")
-        result = connection.execute(query, {"customer_id": p_customer_id})
-        credit_card_balance = result.scalar()
-        connection.commit()
+        query = text("SELECT COALESCE(ROUND(SUM(balance), 2), 0) FROM credit_cards WHERE credit_cards.customer_id = :p_customer_id")
+        result_proxy = conn.execute(query, {"p_customer_id": p_customer_id})
+        credit_card_balance = result_proxy.scalar()
+        conn.commit()
         return credit_card_balance
     finally:
-        connection.close()
+        conn.close()

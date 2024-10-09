@@ -7,10 +7,8 @@ import psycopg2
 def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count):
     connection = engine.connect()
     
-    # Initialize the score
     credit_score = 0
     
-    # Calculate credit score
     if total_loan_amount > 0:
         credit_score += round((total_repayment / total_loan_amount) * 400, 2)
     else:
@@ -23,14 +21,12 @@ def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card
     
     credit_score -= (late_pay_count * 50)
     
-    # Cap the credit score
     if credit_score < 300:
         credit_score = 300
     elif credit_score > 850:
         credit_score = 850
     
-    # Commit changes
     connection.commit()
+    connection.close()
     
-    # Return the calculated credit score
     return credit_score
