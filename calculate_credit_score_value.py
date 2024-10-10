@@ -6,25 +6,24 @@ import psycopg2
 
 def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count):
     connection = engine.connect()
-
     try:
         credit_score = 0
 
         if total_loan_amount > 0:
-            query = text("SELECT ROUND((:total_repayment / :total_loan_amount) * 400, 2)").bindparams(total_repayment=total_repayment, total_loan_amount=total_loan_amount)
-            result = connection.execute(query)
+            query = text("SELECT ROUND((:total_repayment / :total_loan_amount) * 400, 2)")
+            result = connection.execute(query, {'total_repayment': total_repayment, 'total_loan_amount': total_loan_amount})
             credit_score += result.scalar()
         else:
             credit_score += 400
 
         if credit_card_balance > 0:
-            query = text("SELECT ROUND((1 - (:credit_card_balance / 10000)) * 300, 2)").bindparams(credit_card_balance=credit_card_balance)
-            result = connection.execute(query)
+            query = text("SELECT ROUND((1 - (:credit_card_balance / 10000)) * 300, 2)")
+            result = connection.execute(query, {'credit_card_balance': credit_card_balance})
             credit_score += result.scalar()
         else:
             credit_score += 300
 
-        credit_score -= (late_pay_count * 50)
+        credit_score -= late_pay_count * 50
 
         if credit_score < 300:
             credit_score = 300
@@ -32,15 +31,5 @@ def calculate_credit_score_value(total_loan_amount, total_repayment, credit_card
             credit_score = 850
 
         return credit_score
-
     finally:
         connection.close()
-
-# Example usage:
-total_loan_amount = 10000
-total_repayment = 5000
-credit_card_balance = 2000
-late_pay_count = 2
-
-result = calculate_credit_score_value(total_loan_amount, total_repayment, credit_card_balance, late_pay_count)
-print(result)

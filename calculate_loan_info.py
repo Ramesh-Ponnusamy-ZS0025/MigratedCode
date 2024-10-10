@@ -20,6 +20,5 @@ def calculate_loan_info(p_customer_id):
         connection.close()
         return total_loan_amount, total_repayment, outstanding_loan_balance
     except psycopg2.Error as e:
-        print(f"Error: {e}")
         connection.close()
-        return None
+        raise e
