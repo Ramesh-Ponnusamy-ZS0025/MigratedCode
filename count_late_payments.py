@@ -5,15 +5,12 @@ import pandas as pd
 import psycopg2
 
 def count_late_payments(p_customer_id):
-    connection = engine.connect()
+    conn = engine.connect()
     try:
-        query = text("SELECT COUNT(*) FROM payments WHERE customer_id = :p_customer_id AND status = 'Late'")
-        result = connection.execute(query, {"p_customer_id": p_customer_id})
+        query = text("SELECT COUNT(*) FROM payments WHERE payments.customer_id = :customer_id AND status = 'Late'")
+        result = conn.execute(query, {'customer_id': p_customer_id})
         late_pay_count = result.scalar()
-        connection.commit()
-    except Exception as e:
-        print(f"Error: {e}")
-        connection.rollback()
+        conn.commit()
+        return late_pay_count
     finally:
-        connection.close()
-    return late_pay_count
+        conn.close()
