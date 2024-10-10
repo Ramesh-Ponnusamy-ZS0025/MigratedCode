@@ -8,17 +8,18 @@ def calculate_loan_info(p_customer_id):
     connection = engine.connect()
     try:
         query = text("""
-            SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0) AS total_loan_amount, 
-                   COALESCE(ROUND(SUM(repayment_amount), 2), 0) AS total_repayment, 
-                   COALESCE(ROUND(SUM(outstanding_balance), 2), 0) AS outstanding_loan_balance
+            SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0), 
+                   COALESCE(ROUND(SUM(repayment_amount), 2), 0), 
+                   COALESCE(ROUND(SUM(outstanding_balance), 2), 0)
             FROM loans
-            WHERE loans.customer_id = :customer_id
+            WHERE loans.customer_id = :p_customer_id
         """)
-        result = connection.execute(query, {"customer_id": p_customer_id})
+        result = connection.execute(query, {'p_customer_id': p_customer_id})
         row = result.fetchone()
-        connection.commit()
-        return {"total_loan_amount": row[0], "total_repayment": row[1], "outstanding_loan_balance": row[2]}
-    except psycopg2.Error as e:
-        raise e
-    finally:
+        total_loan_amount, total_repayment, outstanding_loan_balance = row
         connection.close()
+        return total_loan_amount, total_repayment, outstanding_loan_balance
+    except psycopg2.Error as e:
+        print(f"Error: {e}")
+        connection.close()
+        return None
