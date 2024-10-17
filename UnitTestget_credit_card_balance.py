@@ -1,26 +1,22 @@
 
 import unittest
-from your_module import get_credit_card_balance  # Replace with the actual module name
+from your_module import get_credit_card_balance
 
 class TestGetCreditCardBalance(unittest.TestCase):
-    def testexisting_customer(self):
-        customer_id = 1  # Replace with a known existing customer ID
+    def test_customer_with_credit_cards(self):
+        customer_id = 1  # assume this customer has credit cards
         balance = get_credit_card_balance(customer_id)
-        self.assertIsNotNone(balance)
-        self.assertAlmostEqual(balance, 123.45, places=2)  # Replace with the expected balance
+        self.assertEquals(balance, 100.00)  # assume the balance is 100.00
 
-    def testnonexistent_customer(self):
-        customer_id = 999  # Replace with a known non-existent customer ID
+    def test_customer_without_credit_cards(self):
+        customer_id = 2  # assume this customer has no credit cards
         balance = get_credit_card_balance(customer_id)
-        self.assertEqual(balance, 0.0)
+        self.assertEquals(balance, 0.00)
 
-    def test_connection_error(self):
-        # Simulate a connection error by temporarily changing the engine URL
-        original_engine_url = engine.url
-        engine.url = 'postgresql:// invalid_user:invalid_pass@ invalid_host:5432/invalid_db'
-        with self.assertRaises(psycopg2.OperationalError):
-            get_credit_card_balance(1)
-        engine.url = original_engine_url
+    def test_invalid_customer_id(self):
+        customer_id = -1  # assume this customer does not exist
+        balance = get_credit_card_balance(customer_id)
+        self.assertEquals(balance, 0.00)
 
 if __name__ == '__main__':
     unittest.main()

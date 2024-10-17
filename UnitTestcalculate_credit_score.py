@@ -1,27 +1,22 @@
 
 import unittest
-from your_module import calculate_credit_score  # Replace 'your_module' with the actual module name
+from calculate_credit_score import calculate_credit_score
 
 class TestCalculateCreditScore(unittest.TestCase):
-
     def test_calculate_credit_score(self):
-        customer_id = 1  # Assuming customer with id 1 exists in the database
-        credit_score = calculate_credit_score(customer_id)
-        self.assertEquals(credit_score, 700)  # Replace 700 with the expected credit score
+        customer_id = 1  # Replace with a valid customer ID
+        credit_score = calculate_credit_info(customer_id)
+        self.assertEquals(credit_score, 750)  # Replace with an expected credit score value
 
-    def test_low_credit_score_alert(self):
-        customer_id = 2  # Assuming customer with id 2 exists in the database
-        credit_score = calculate_credit_score(customer_id)
-        self.assertEquals(credit_score, 400)  # Replace 400 with the expected credit score
+    def test_calculate_credit_score_low_score(self):
+        customer_id = 2  # Replace with a valid customer ID
+        credit_score = calculate_credit_info(customer_id)
+        self.assertEquals(credit_score, 350)  # Replace with an expected low credit score value
 
-    def test_update_customer_credit_score(self):
-        customer_id = 3  # Assuming customer with id 3 exists in the database
-        calculate_credit_score(customer_id)
-        # Query the database to check if the credit score is updated correctly
-        conn = engine.connect()
-        result = conn.execute("SELECT credit_score FROM customers WHERE id = :p_customer_id", {'p_customer_id': customer_id})
-        updated_credit_score = result.fetchone()[0]
-        self.assertEquals(updated_credit_score, 600)  # Replace 600 with the expected updated credit score
+    def test_calculate_credit_score_error(self):
+        customer_id = None  # Pass an invalid customer ID to test error handling
+        with self.assertRaises(psycopg2.Error):
+            calculate_credit_info(customer_id)
 
 if __name__ == '__main__':
     unittest.main()

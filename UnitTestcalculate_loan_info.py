@@ -1,22 +1,23 @@
 
 import unittest
-from your_module import calculate_loan_info  # replace 'your_module' with the actual module name
+from your_module import calculate_loan_info  # replace with the actual module name
 
 class TestCalculateLoanInfo(unittest.TestCase):
-    def test_calculate_loan_info_customer Exists(self):
-        customer_id = 1  # assuming customer with id 1 exists in the database
-        loan_amount, repayment_amount, outstanding_balance = calculate_loan_info(customer_id)
-        self.assertEquals((loan_amount, repayment_amount, outstanding_balance), (1000.0, 500.0, 500.0))  # adjust the expected values accordingly
+    def test_customer_id_1(self):
+        result = calculate_loan_info(1)
+        self.assertEqual(result["total_loan_amount"], 100.0)  # assuming this is the expected value
 
-    def test_calculate_loan_info_customerDoesNotExist(self):
-        customer_id = 100  # assuming customer with id 100 does not exist in the database
-        loan_amount, repayment_amount, outstanding_balance = calculate_loan_info(customer_id)
-        self.assertEquals((loan_amount, repayment_amount, outstanding_balance), (0.0, 0.0, 0.0))
+    def test_customer_id_2(self):
+        result = calculate_loan_info(2)
+        self.assertEqual(result["total_repayment"], 50.0)  # assuming this is the expected value
 
-    def test_calculate_loan_info_databaseError(self):
-        customer_id = 1  # assuming customer with id 1 exists in the database
-        with self.assertRaises(psycopg2.Error):
-            calculate_loan_info(customer_id)  # simulate a database error
+    def test_customer_id_3(self):
+        result = calculate_loan_info(3)
+        self.assertEqual(result["outstanding_loan_balance"], 200.0)  # assuming this is the expected value
 
-if __name__ == '__main__':
+    def test_invalid_customer_id(self):
+        result = calculate_loan_info(999)  # assuming this customer ID does not exist
+        self.assertIsNone(result)  # or you can assert a specific error message
+
+if __name__ == "__main__":
     unittest.main()
