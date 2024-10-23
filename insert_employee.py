@@ -11,9 +11,6 @@ def insert_employee(emp_name, emp_salary):
         conn.execute(query, {"emp_name": emp_name, "emp_salary": emp_salary})
         conn.commit()
     except psycopg2.Error as e:
-        conn.rollback()
-        raise e
+        raise Exception(e)
     finally:
         conn.close()
-
-# No need to import nested procedures as there are no nested calls in this example

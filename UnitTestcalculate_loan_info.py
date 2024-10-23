@@ -1,23 +1,22 @@
 
 import unittest
-from your_module import calculate_loan_info  # replace with the actual module name
+from your_module import calculate_loan_info  # Replace with the actual module name
 
 class TestCalculateLoanInfo(unittest.TestCase):
-    def test_customer_id_1(self):
-        result = calculate_loan_info(1)
-        self.assertEqual(result["total_loan_amount"], 100.0)  # assuming this is the expected value
+    def test_customer_with_loans(self):
+        customer_id = 1  # assume this customer has loans in the database
+        total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
+        self.assertEquals(outstanding_loan_balance, 500.00)  # example value, adjust according to your data
 
-    def test_customer_id_2(self):
-        result = calculate_loan_info(2)
-        self.assertEqual(result["total_repayment"], 50.0)  # assuming this is the expected value
-
-    def test_customer_id_3(self):
-        result = calculate_loan_info(3)
-        self.assertEqual(result["outstanding_loan_balance"], 200.0)  # assuming this is the expected value
+    def test_customer_without_loans(self):
+        customer_id = 2  # assume this customer has no loans in the database
+        total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
+        self.assertEquals(total_loan_amount, 0.00)  # example value, adjust according to your data
 
     def test_invalid_customer_id(self):
-        result = calculate_loan_info(999)  # assuming this customer ID does not exist
-        self.assertIsNone(result)  # or you can assert a specific error message
+        customer_id = -1  # invalid customer ID
+        with self.assertRaises(Exception):
+            calculate_loan_info(customer_id)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
