@@ -1,17 +1,19 @@
 
 import unittest
-from your_module import calculate_loan_info  # Import the function from your module
+from your_module import calculate_loan_info  # replace with the actual module name
 
 class TestCalculateLoanInfo(unittest.TestCase):
-    def test_calculate_loan_info_customer_exists(self):
-        customer_id = 1  # Assuming customer with id 1 exists in the database
-        total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
-        self.assertEqual(total_loan_amount, 1000.0)  # Replace with the expected value
+    def test_customer_id_123(self):
+        result = calculate_loan_info(123)
+        self.assertEqual(result, (1000.0, 500.0, 500.0))  # replace with expected values
 
-    def test_calculate_loan_info_customer_does_not_exist(self):
-        customer_id = 999  # Assuming customer with id 999 does not exist in the database
-        total_loan_amount, total_repayment, outstanding_loan_balance = calculate_loan_info(customer_id)
-        self.assertEqual(total_loan_amount, 0.0)  # Since no records found, loan amount should be 0
+    def test_customer_id_456(self):
+        result = calculate_loan_info(456)
+        self.assertEqual(result, (2000.0, 1000.0, 1000.0))  # replace with expected values
+
+    def test_customer_id_nonexistent(self):
+        result = calculate_loan_info(789)
+        self.assertEqual(result, (0.0, 0.0, 0.0))  # expected default values when no records found
 
 if __name__ == '__main__':
     unittest.main()
