@@ -4,21 +4,17 @@ from sqlalchemy import text
 import pandas as pd
 import psycopg2
 
-def calculate_loan_info(p_customer_id):
+def calculate_loan_info(customer_id):
     connection = engine.connect()
     try:
-        query = text("""
-            SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0), 
-                   COALESCE(ROUND(SUM(repayment_amount), 2), 0), 
-                   COALESCE(ROUND(SUM(outstanding_balance), 2), 0)
-            FROM loans
-            WHERE loans.customer_id = :p_customer_id
-        """)
-        result = connection.execute(query, {'p_customer_id': p_customer_id})
+        query = text("SELECT COALESCE(ROUND(SUM(loan_amount), 2), 0), "
+                     "COALESCE(ROUND(SUM(repayment_amount), 2), 0), "
+                     "COALESCE(ROUND(SUM(outstanding_balance), 2), 0) "
+                     "FROM loans "
+                     "WHERE loans.customer_id = :customer_id")
+        result = connection.execute(query, {'customer_id': customer_id})
         row = result.fetchone()
         total_loan_amount, total_repayment, outstanding_loan_balance = row
-        connection.close()
         return total_loan_amount, total_repayment, outstanding_loan_balance
-    except psycopg2.Error as e:
+    finally:
         connection.close()
-        raise Exception(f"Error executing query: {e}")
