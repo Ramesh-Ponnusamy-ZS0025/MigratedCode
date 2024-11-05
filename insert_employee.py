@@ -5,13 +5,16 @@ import pandas as pd
 import psycopg2
 
 def insert_employee(emp_name, emp_salary):
-    connection = engine.connect()
+    conn = engine.connect()
+    
     try:
-        insert_query = text("""INSERT INTO employees (name, salary) VALUES (:emp_name, :emp_salary)""")
-        connection.execute(insert_query, {'emp_name': emp_name, 'emp_salary': emp_salary})
-        connection.commit()
+        query = text("INSERT INTO employees (name, salary) VALUES (:emp_name, :emp_salary)")
+        conn.execute(query, {'emp_name': emp_name, 'emp_salary': emp_salary})
+        conn.commit()
     except psycopg2.Error as e:
-        connection.rollback()
-        raise e
+        print(f"Error: {e}")
+        conn.rollback()
     finally:
-        connection.close()
+        conn.close()
+
+# Note: No ORM models are used, and the function returns no output as per the original procedure.

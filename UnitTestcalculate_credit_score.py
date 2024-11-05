@@ -3,21 +3,23 @@ import unittest
 from your_module import calculate_credit_score  # Replace with the actual module name
 
 class TestCalculateCreditScore(unittest.TestCase):
-    def test_credit_score_update(self):
-        customer_id = 123  # Replace with a valid customer ID
+    def test_calculate_credit_score(self):
+        # Test with a valid customer ID
+        customer_id = 1
         credit_score = calculate_credit_score(customer_id)
-        self.assertEqual(credit_score, 600)  # Replace with the expected credit score
+        self.assertEquals(credit_score, 750)  # Replace with expected credit score value
 
-    def test_low_credit_score_alert(self):
-        customer_id = 456  # Replace with a customer ID that should trigger a low credit score alert
+    def test_calculate_credit_score_invalid_customer_id(self):
+        # Test with an invalid customer ID
+        customer_id = -1
         credit_score = calculate_credit_score(customer_id)
-        self.assertEqual(credit_score, 400)  # Replace with the expected credit score
+        self.assertEquals(credit_score, None)  # Replace with expected value for invalid customer ID
 
-    def test_no_change_to_credit_score(self):
-        customer_id = 789  # Replace with a customer ID that should not update the credit score
-        original_credit_score = 700  # Replace with the original credit score
+    def test_calculate_credit_score_low_credit_score(self):
+        # Test with a customer ID that results in a low credit score
+        customer_id = 2
         credit_score = calculate_credit_score(customer_id)
-        self.assertEqual(credit_score, original_credit_score)
+        self.assertEquals(credit_score, 300)  # Replace with expected low credit score value
 
 if __name__ == '__main__':
     unittest.main()
